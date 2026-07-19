@@ -63,6 +63,12 @@ struct L10n {
     var language: String           { pick("언어", "Language", "Idioma") }
     var noHoliday: String          { pick("휴일 없음", "No Holiday", "Sin Festivo") }
 
+    // MARK: - Country Names
+    func countryName(for code: String, fallback: String) -> String {
+        guard lang != .korean else { return fallback }
+        return Country.localizedName(code: code, language: lang) ?? fallback
+    }
+
     // MARK: - Helper
     private func pick(_ ko: String, _ en: String, _ es: String) -> String {
         switch lang {

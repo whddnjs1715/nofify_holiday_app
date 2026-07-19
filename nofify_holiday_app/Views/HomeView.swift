@@ -46,7 +46,9 @@ struct HomeView: View {
             .onChange(of: store.countryCode) { _ in
                 Task { await loadHolidays() }
             }
-            .onChange(of: store.language) { _ in }
+            .onChange(of: store.language) { _ in
+                // Trigger re-render on language change
+            }
         }
     }
 

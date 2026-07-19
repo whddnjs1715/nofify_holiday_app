@@ -21,13 +21,16 @@ struct SettingsView: View {
         let l = store.l10n
         NavigationView {
             Form {
+                // Language picker
                 Section(header: Text(l.language)) {
                     ForEach(AppLanguage.allCases, id: \.self) { lang in
                         Button {
                             store.language = lang
+                            // Update country name to match new language
                             if let localized = Country.localizedName(code: store.countryCode, language: lang) {
                                 store.countryName = localized
                             } else {
+                                // Fall back to Korean name
                                 store.countryName = Country.popular.first(where: { $0.id == store.countryCode })?.name ?? store.countryName
                             }
                             WidgetCenter.shared.reloadAllTimelines()
@@ -45,6 +48,7 @@ struct SettingsView: View {
                     }
                 }
 
+                // Country picker
                 Section(header: Text(l.selectedCountry)) {
                     HStack {
                         Text(store.countryName)
