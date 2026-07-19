@@ -19,6 +19,11 @@ class DataStore: ObservableObject {
             if let info = nextHoliday { save(info, forKey: UserDefaultsKeys.nextHoliday) }
         }
     }
+    @Published var language: AppLanguage {
+        didSet { defaults.set(language.rawValue, forKey: UserDefaultsKeys.language) }
+    }
+
+    var l10n: L10n { L10n(lang: language) }
 
     init() {
         self.defaults = UserDefaults(suiteName: AppGroup.identifier) ?? .standard
@@ -26,6 +31,8 @@ class DataStore: ObservableObject {
         self.countryName = defaults.string(forKey: UserDefaultsKeys.countryName) ?? "대한민국"
         self.vacations = DataStore.load([PersonalVacation].self, forKey: UserDefaultsKeys.vacations, from: defaults) ?? []
         self.nextHoliday = DataStore.load(NextHolidayInfo.self, forKey: UserDefaultsKeys.nextHoliday, from: defaults)
+        let savedLang = defaults.string(forKey: UserDefaultsKeys.language) ?? "ko"
+        self.language = AppLanguage(rawValue: savedLang) ?? .korean
     }
 
     private func save<T: Encodable>(_ value: T, forKey key: String) {

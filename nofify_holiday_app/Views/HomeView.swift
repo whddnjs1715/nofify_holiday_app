@@ -8,26 +8,27 @@ struct HomeView: View {
     @State private var errorMessage: String?
 
     var body: some View {
+        let l = store.l10n
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
-                    DDayCard(info: store.nextHoliday)
+                    DDayCard(info: store.nextHoliday, l: l)
                         .padding(.horizontal)
 
                     if !upcomingHolidays.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("다가오는 공휴일")
+                            Text(l.upcomingHolidays)
                                 .font(.headline)
                                 .padding(.horizontal)
 
                             ForEach(upcomingHolidays.prefix(5)) { holiday in
-                                HolidayRow(holiday: holiday)
+                                HolidayRow(holiday: holiday, l: l)
                             }
                         }
                     }
 
                     if isLoading {
-                        ProgressView("공휴일 불러오는 중...")
+                        ProgressView(l.loadingHolidays)
                             .padding()
                     }
 
@@ -40,11 +41,12 @@ struct HomeView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("\(store.countryName) 공휴일")
+            .navigationTitle(l.countryHolidays(store.countryName))
             .task { await loadHolidays() }
             .onChange(of: store.countryCode) { _ in
                 Task { await loadHolidays() }
             }
+            .onChange(of: store.language) { _ in }
         }
     }
 
@@ -77,7 +79,7 @@ struct HomeView: View {
             }
         } catch {
             await MainActor.run {
-                errorMessage = "공휴일 정보를 가져오지 못했어요: \(error.localizedDescription)"
+                errorMessage = store.l10n.holidayLoadError(error.localizedDescription)
             }
         }
         await MainActor.run { isLoading = false }
@@ -86,6 +88,7 @@ struct HomeView: View {
 
 struct DDayCard: View {
     let info: NextHolidayInfo?
+    let l: L10n
 
     var body: some View {
         ZStack {
@@ -103,7 +106,7 @@ struct DDayCard: View {
                     HStack {
                         Image(systemName: info.isPersonal ? "suitcase.fill" : "calendar")
                             .foregroundColor(.white.opacity(0.8))
-                        Text(info.isPersonal ? "내 휴가" : "공휴일")
+                        Text(info.isPersonal ? l.myVacation : l.publicHoliday)
                             .font(.caption)
                             .foregroundColor(.white.opacity(0.8))
                         Spacer()
@@ -116,15 +119,9 @@ struct DDayCard: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     HStack(alignment: .bottom) {
-                        Group {
-                            if info.daysRemaining == 0 {
-                                Text("D-Day!")
-                            } else {
-                                Text("D-\(info.daysRemaining)")
-                            }
-                        }
-                        .font(.system(size: 52, weight: .black))
-                        .foregroundColor(.white)
+                        Text(info.daysRemaining == 0 ? l.dDay : "D-\(info.daysRemaining)")
+                            .font(.system(size: 52, weight: .black))
+                            .foregroundColor(.white)
 
                         Spacer()
 
@@ -139,7 +136,7 @@ struct DDayCard: View {
                     Image(systemName: "calendar.badge.exclamationmark")
                         .font(.largeTitle)
                         .foregroundColor(.white.opacity(0.6))
-                    Text("다가오는 휴일 없음")
+                    Text(l.noUpcomingHoliday)
                         .font(.title3)
                         .foregroundColor(.white)
                 }
@@ -152,6 +149,7 @@ struct DDayCard: View {
 
 struct HolidayRow: View {
     let holiday: PublicHoliday
+    let l: L10n
 
     var daysLeft: Int? {
         guard let d = holiday.dateValue else { return nil }
@@ -172,7 +170,7 @@ struct HolidayRow: View {
             }
             Spacer()
             if let days = daysLeft {
-                Text(days == 0 ? "오늘!" : "D-\(days)")
+                Text(days == 0 ? l.today : "D-\(days)")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .foregroundColor(days <= 7 ? .red : .blue)

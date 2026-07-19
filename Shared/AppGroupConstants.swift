@@ -9,4 +9,5 @@ enum UserDefaultsKeys {
     static let countryName = "selectedCountryName"
     static let vacations = "personalVacations"
     static let nextHoliday = "nextHoliday"
+    static let language = "appLanguage"
 }

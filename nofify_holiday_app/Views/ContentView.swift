@@ -8,17 +8,17 @@ struct ContentView: View {
         TabView {
             HomeView()
                 .tabItem {
-                    Label("홈", systemImage: "house.fill")
+                    Label(store.l10n.tabHome, systemImage: "house.fill")
                 }
 
             VacationListView()
                 .tabItem {
-                    Label("내 휴가", systemImage: "suitcase.fill")
+                    Label(store.l10n.tabVacation, systemImage: "suitcase.fill")
                 }
 
             SettingsView()
                 .tabItem {
-                    Label("설정", systemImage: "gearshape.fill")
+                    Label(store.l10n.tabSettings, systemImage: "gearshape.fill")
                 }
         }
     }

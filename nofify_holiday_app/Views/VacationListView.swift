@@ -6,6 +6,7 @@ struct VacationListView: View {
     @State private var showingAddSheet = false
 
     var body: some View {
+        let l = store.l10n
         NavigationView {
             Group {
                 if store.vacations.isEmpty {
@@ -13,10 +14,10 @@ struct VacationListView: View {
                         Image(systemName: "suitcase")
                             .font(.system(size: 60))
                             .foregroundColor(.secondary)
-                        Text("등록된 휴가가 없어요")
+                        Text(l.noVacations)
                             .font(.title3)
                             .foregroundColor(.secondary)
-                        Button("휴가 추가하기") {
+                        Button(l.addVacationCTA) {
                             showingAddSheet = true
                         }
                         .buttonStyle(.borderedProminent)
@@ -25,13 +26,13 @@ struct VacationListView: View {
                 } else {
                     List {
                         ForEach(store.vacations) { vacation in
-                            VacationRow(vacation: vacation)
+                            VacationRow(vacation: vacation, l: l)
                         }
                         .onDelete(perform: deleteVacation)
                     }
                 }
             }
-            .navigationTitle("내 휴가")
+            .navigationTitle(l.tabVacation)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -42,7 +43,7 @@ struct VacationListView: View {
                 }
             }
             .sheet(isPresented: $showingAddSheet) {
-                AddVacationView { vacation in
+                AddVacationView(l: l) { vacation in
                     store.vacations.append(vacation)
                     store.vacations.sort { $0.startDate < $1.startDate }
                     WidgetCenter.shared.reloadAllTimelines()
@@ -59,10 +60,12 @@ struct VacationListView: View {
 
 struct VacationRow: View {
     let vacation: PersonalVacation
+    let l: L10n
 
     private var dateRangeText: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "M월 d일"
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
         let start = formatter.string(from: vacation.startDate)
         let end = formatter.string(from: vacation.endDate)
         return "\(start) ~ \(end)"
@@ -80,7 +83,7 @@ struct VacationRow: View {
             }
             Spacer()
             if let days = vacation.daysUntilStart {
-                Text(days == 0 ? "오늘!" : "D-\(days)")
+                Text(days == 0 ? l.today : "D-\(days)")
                     .font(.callout)
                     .fontWeight(.semibold)
                     .foregroundColor(days <= 7 ? .red : .blue)
@@ -91,7 +94,7 @@ struct VacationRow: View {
                             .fill((days <= 7 ? Color.red : Color.blue).opacity(0.1))
                     )
             } else {
-                Text("지남")
+                Text(l.past)
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
@@ -106,28 +109,29 @@ struct AddVacationView: View {
     @State private var startDate = Date()
     @State private var endDate = Date().addingTimeInterval(86400 * 3)
 
+    let l: L10n
     let onAdd: (PersonalVacation) -> Void
 
     var body: some View {
         NavigationView {
             Form {
-                Section("휴가 이름") {
-                    TextField("예: 여름 휴가", text: $name)
+                Section(l.vacationName) {
+                    TextField(l.vacationNamePlaceholder, text: $name)
                 }
 
-                Section("기간") {
-                    DatePicker("시작일", selection: $startDate, displayedComponents: .date)
-                    DatePicker("종료일", selection: $endDate, in: startDate..., displayedComponents: .date)
+                Section(l.period) {
+                    DatePicker(l.startDate, selection: $startDate, displayedComponents: .date)
+                    DatePicker(l.endDate, selection: $endDate, in: startDate..., displayedComponents: .date)
                 }
             }
-            .navigationTitle("휴가 추가")
+            .navigationTitle(l.addVacationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") { dismiss() }
+                    Button(l.cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("추가") {
+                    Button(l.add) {
                         guard !name.trimmingCharacters(in: .whitespaces).isEmpty else { return }
                         let vacation = PersonalVacation(
                             name: name,

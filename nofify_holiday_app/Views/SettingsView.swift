@@ -6,17 +6,46 @@ struct SettingsView: View {
     @State private var searchText = ""
 
     private var filteredCountries: [Country] {
-        if searchText.isEmpty { return Country.popular }
-        return Country.popular.filter {
+        let countries = Country.popular.map { country -> Country in
+            let localizedName = Country.localizedName(code: country.id, language: store.language) ?? country.name
+            return Country(id: country.id, name: localizedName)
+        }
+        if searchText.isEmpty { return countries }
+        return countries.filter {
             $0.name.localizedCaseInsensitiveContains(searchText) ||
             $0.id.localizedCaseInsensitiveContains(searchText)
         }
     }
 
     var body: some View {
+        let l = store.l10n
         NavigationView {
             Form {
-                Section(header: Text("현재 선택된 나라")) {
+                Section(header: Text(l.language)) {
+                    ForEach(AppLanguage.allCases, id: \.self) { lang in
+                        Button {
+                            store.language = lang
+                            if let localized = Country.localizedName(code: store.countryCode, language: lang) {
+                                store.countryName = localized
+                            } else {
+                                store.countryName = Country.popular.first(where: { $0.id == store.countryCode })?.name ?? store.countryName
+                            }
+                            WidgetCenter.shared.reloadAllTimelines()
+                        } label: {
+                            HStack {
+                                Text(lang.displayName)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                if store.language == lang {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Section(header: Text(l.selectedCountry)) {
                     HStack {
                         Text(store.countryName)
                             .font(.headline)
@@ -31,7 +60,7 @@ struct SettingsView: View {
                     }
                 }
 
-                Section(header: Text("나라 선택")) {
+                Section(header: Text(l.selectCountry)) {
                     ForEach(filteredCountries) { country in
                         Button {
                             store.countryCode = country.id
@@ -55,13 +84,13 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Text("공휴일 데이터 출처: Nager.Date API")
+                    Text(l.dataSource)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
-            .searchable(text: $searchText, prompt: "나라 검색")
-            .navigationTitle("설정")
+            .searchable(text: $searchText, prompt: l.searchCountry)
+            .navigationTitle(l.tabSettings)
         }
     }
 }
