@@ -5,20 +5,21 @@ struct ContentView: View {
     @EnvironmentObject var store: DataStore
 
     var body: some View {
-        TabView {
+        let l = store.l10n
+        return TabView {
             HomeView()
                 .tabItem {
-                    Label(store.l10n.tabHome, systemImage: "house.fill")
+                    Label(l.tabHome, systemImage: "house.fill")
                 }
 
             VacationListView()
                 .tabItem {
-                    Label(store.l10n.tabVacation, systemImage: "suitcase.fill")
+                    Label(l.tabVacation, systemImage: "suitcase.fill")
                 }
 
             SettingsView()
                 .tabItem {
-                    Label(store.l10n.tabSettings, systemImage: "gearshape.fill")
+                    Label(l.tabSettings, systemImage: "gearshape.fill")
                 }
         }
     }
