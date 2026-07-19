@@ -21,6 +21,8 @@
 		AA000012 /* HolidayService.swift in Sources (Widget) */ = {isa = PBXBuildFile; fileRef = AA100007 /* HolidayService.swift */; };
 		AA000013 /* DataStore.swift in Sources (Widget) */ = {isa = PBXBuildFile; fileRef = AA100008 /* DataStore.swift */; };
 		AA000014 /* AppGroupConstants.swift in Sources (Widget) */ = {isa = PBXBuildFile; fileRef = AA100009 /* AppGroupConstants.swift */; };
+		AA000015 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA100011 /* L10n.swift */; };
+		AA000016 /* L10n.swift in Sources (Widget) */ = {isa = PBXBuildFile; fileRef = AA100011 /* L10n.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,7 @@
 		AA100008 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		AA100009 /* AppGroupConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupConstants.swift; sourceTree = "<group>"; };
 		AA100010 /* HolidayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HolidayWidget.swift; sourceTree = "<group>"; };
+		AA100011 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		AA200001 /* nofify_holiday_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = nofify_holiday_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA200002 /* HolidayWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HolidayWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -64,6 +67,7 @@
 				AA100006 /* Models.swift */,
 				AA100007 /* HolidayService.swift */,
 				AA100008 /* DataStore.swift */,
+				AA100011 /* L10n.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -183,6 +187,7 @@
 				AA000007 /* HolidayService.swift in Sources */,
 				AA000008 /* DataStore.swift in Sources */,
 				AA000009 /* AppGroupConstants.swift in Sources */,
+				AA000015 /* L10n.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +200,7 @@
 				AA000012 /* HolidayService.swift in Sources (Widget) */,
 				AA000013 /* DataStore.swift in Sources (Widget) */,
 				AA000014 /* AppGroupConstants.swift in Sources (Widget) */,
+				AA000016 /* L10n.swift in Sources (Widget) */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
